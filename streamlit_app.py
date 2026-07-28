@@ -9,12 +9,8 @@ st.set_page_config(page_title="互動式 AI 影像處理與人臉偵測系統", 
 st.title("🎨 互動式 AI 影像處理與人臉偵測系統")
 st.write("請在左側側邊欄上傳圖片並調整參數！")
 
-# 2. 載入 OpenCV 內建的人臉偵測分類器
-@st.cache_resource
-def load_face_cascade():
-    return cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-face_cascade = load_face_cascade()
+# 2. 載入 OpenCV 內建的人臉偵測分類器 (不使用快取以避免 Streamlit 報錯)
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # 3. 側邊欄控制面版
 st.sidebar.header("控制面版")

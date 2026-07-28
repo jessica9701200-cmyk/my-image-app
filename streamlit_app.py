@@ -3,23 +3,15 @@ import cv2
 import numpy as np
 from PIL import Image, ImageEnhance
 import io
-import urllib.request
-import os
 
 # 1. 網頁標題與設定
 st.set_page_config(page_title="互動式 AI 影像處理與人臉偵測系統", layout="wide")
 st.title("🎨 互動式 AI 影像處理與人臉偵測系統")
 st.write("請在左側側邊欄上傳圖片並調整參數！")
 
-# 2. 自動下載 OpenCV 人臉偵測模型的函式 (確保 100% 不會在雲端環境出錯)
-def get_face_cascade():
-    cascade_filename = "haarcascade_frontalface_default.xml"
-    if not os.path.exists(cascade_filename):
-        url = "https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml"
-        urllib.request.urlretrieve(url, cascade_filename)
-    return cv2.CascadeClassifier(cascade_filename)
-
-face_cascade = get_face_cascade()
+# 2. 直接載入專案目錄下的 XML 模型檔
+face_cascade = cv2.CascadeClassifier()
+face_cascade.load("haarcascade_frontalface_default.xml")
 
 # 3. 側邊欄控制面版
 st.sidebar.header("控制面版")
@@ -69,7 +61,6 @@ if uploaded_file is not None:
         # 針對每一張偵測到的臉進行馬賽克處理
         for (x, y, w, h) in faces:
             face_roi = img[y:y+h, x:x+w]
-            # 縮小再放大產生馬賽克效果
             mh = max(1, h // mosaic_size)
             mw = max(1, w // mosaic_size)
             small_face = cv2.resize(face_roi, (mw, mh), interpolation=cv2.INTER_LINEAR)

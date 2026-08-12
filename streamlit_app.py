@@ -22,8 +22,8 @@ brightness = st.sidebar.slider("亮度調整", min_value=0.5, max_value=2.0, val
 
 # 3. 影像處理邏輯與畫面渲染
 if uploaded_file is not None:
-    # 讀取圖片
-    image = Image.open(uploaded_file)
+    # 讀取圖片並強制轉為 RGB 模式 (防止 RGBA 4通道 PNG 報錯)
+    image = Image.open(uploaded_file).convert("RGB")
     img = np.array(image)
     
     # 調整亮度
@@ -43,11 +43,11 @@ if uploaded_file is not None:
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         img = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     elif filter_type == "復古暖色調":
-        r, g, b = cv2.split(img)
-        r = cv2.add(r, 30)
-        b = cv2.subtract(b, 30)
-        img = cv2.merge((r, g, b))
-        img = np.clip(img, 0, 255).astype(np.uint8)
+        # 使用安全的矩陣通道偏移，並防止數值溢出 (np.clip)
+        r, g, b = img[:, :, 0], img[:, :, 1], img[:, :, 2]
+        r = np.clip(r.astype(int) + 30, 0, 255).astype(np.uint8)
+        b = np.clip(b.astype(int) - 30, 0, 255).astype(np.uint8)
+        img = np.stack([r, g, b], axis=-1)
 
     # 左右排版顯示原始與處理後的圖片
     col1, col2 = st.columns(2)

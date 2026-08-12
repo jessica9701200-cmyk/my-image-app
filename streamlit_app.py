@@ -53,9 +53,9 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("原圖")
-        st.image(image, use_column_width=True)
+       st.image(image, use_container_width=True
     with col2:
         st.subheader("處理後結果")
-        st.image(img, use_column_width=True)
+       st.image(img, use_container_width=True)
 else:
     st.info("👈 請先從左側側邊欄上傳圖片以開始操作！")
